@@ -59,53 +59,45 @@ database.ref().on("child_added", function (childSnapshot) {
   var trainTime = childSnapshot.val().time;
   var trainFrequency = childSnapshot.val().frequency;
 
-  // Employee Info
+  // train Info
   console.log(trainName);
   console.log(trainDestination);
   console.log(trainTime);
   console.log(trainFrequency);
 
   // First Time (pushed back 1 year to make sure it comes before current time)
-  var firstTimeConverted = moment(trainTime, "HH:mm").subtract(1, "years");
-  console.log(firstTimeConverted);
+  var firstTimeConverted = moment(trainTime, "X").subtract(1, "years");
+  console.log(firstTimeConverted.format("hh:mm a"));
 
   // Current Time
   var currentTime = moment();
-  console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm A"));
+  console.log("CURRENT TIME: " + moment(currentTime).format("hh:mm a"));
 
   // Difference between the times
   var diffTime = moment().diff(moment(firstTimeConverted), "minutes");
   console.log("DIFFERENCE IN TIME: " + diffTime);
 
   // Time apart (remainder)
-  var trainRemainder = diffTime % trainFrequency;
-  console.log(trainRemainder);
+  var tRemainder = diffTime % trainFrequency;
+  console.log(tRemainder);
 
   // Minute Until Train
-  var minutesTillTrain = trainFrequency - trainRemainder;
-  console.log("MINUTES TILL TRAIN: " + minutesTillTrain);
+  var tMinutesTillTrain = trainFrequency - tRemainder;
+  console.log("MINUTES TILL TRAIN: " + tMinutesTillTrain);
 
   // Next Train
-  var nextTrain = moment().add(minutesTillTrain, "minutes").format("hh:mm A");
-  console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm A"));
+  var nextTrain = moment().add(tMinutesTillTrain, "minutes");
+  console.log("ARRIVAL TIME: " + moment(nextTrain).format("hh:mm a"));
 
   // Create the new row
   var newRow = $("<tr>").append(
     $("<td>").text(trainName),
     $("<td>").text(trainDestination),
     $("<td>").text(trainFrequency),
-    $("<td>").text(nextTrain),
-    $("<td>").text(minutesTillTrain)
+    $("<td>").text(nextTrain.format("hh:mm A")),
+    $("<td>").text(tMinutesTillTrain)
   );
 
   // Append the new row to the table
   $("#schedule-table > tbody").append(newRow);
 });
-
-// Example Time Math
-// -----------------------------------------------------------------------------
-// Assume Employee start date of January 1, 2015
-// Assume current date is March 1, 2016
-
-// We know that this is 15 months.
-// Now we will create code in moment.js to confirm that any attempt we use meets this test case
